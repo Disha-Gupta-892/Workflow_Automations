@@ -155,6 +155,10 @@ n8n Backend Automation
         v
 Async Response to UI
 ```
+
+Preview:
+![Image](https://github.com/Disha-Gupta-892/Workflow_Automations/blob/74af3173a53759dc537818b5f30155da25af6649/AI_Expense_Tracker/ExpenseFlow_Landscape_UI.png)
+
 ### ⚠️ Current Limitation
 
 This version was **not implemented within the assignment window** due to:
