@@ -1,0 +1,304 @@
+{
+  "name": "Expense Tracker",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=Analyze the user input and break it down into below mentioned fields:\nCredit/Debit\nType of Expense\nAmount\nTotal\n\nWhen it is a debit subtract from the total amount,when it is a credit add in to the total amount.\nOnce you have come up with the output fields add the latest output field to the google sheet.\n\nIf the total become 10000 or less than 10000, send an email to user alerting them about low balance otherwise no need to send email to user.\n\n\nthe user input is : \n {{ $json.message.text }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        48,
+        0
+      ],
+      "id": "0be96ae3-ae65-4433-8b0e-dedc1fbcd5e4",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -96,
+        208
+      ],
+      "id": "9e2122ab-6996-42d0-a7ac-a3ad68a394e3",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "FwOSSIyiOZJYz88e",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.text }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        64,
+        208
+      ],
+      "id": "a6fc0e43-14c5-4215-bf29-3d6d6eacbd44",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        0
+      ],
+      "id": "4706ed5b-eff5-4d66-a8f4-d562c9dbc300",
+      "name": "MONEY Tracker",
+      "webhookId": "c2bc9fe0-32cd-44e2-96e9-7f4385295caa",
+      "credentials": {
+        "telegramApi": {
+          "id": "jsO1HYOrfF2b3Lcn",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1CizNDnABxlkNUNNjqcc66DNE2D36oCbkcKJxe9lsxzE",
+          "mode": "list",
+          "cachedResultName": "Expense Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CizNDnABxlkNUNNjqcc66DNE2D36oCbkcKJxe9lsxzE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CizNDnABxlkNUNNjqcc66DNE2D36oCbkcKJxe9lsxzE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Credit/Debit": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Credit_Debit', ``, 'string') }}",
+            "Type of Expense ": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Type_of_Expense_', ``, 'string') }}",
+            "Amount": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Amount', ``, 'string') }}",
+            "Total": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Total', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Credit/Debit",
+              "displayName": "Credit/Debit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type of Expense ",
+              "displayName": "Type of Expense ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total",
+              "displayName": "Total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        208
+      ],
+      "id": "baaab1b4-fae8-414e-a050-e3cbab419f62",
+      "name": "Balance updater",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "x24CMQEZM4e3iXzl",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "aiforu144@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        208
+      ],
+      "id": "987307bc-a9aa-4173-a224-33305ae91000",
+      "name": "Balance Alert",
+      "webhookId": "45debec7-7792-404c-b8a7-1e9e34cdb879",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qJDgqeuL19qYQU6O",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('MONEY Tracker').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "replyMarkup": "=",
+        "forceReply": {},
+        "replyKeyboardOptions": {},
+        "replyKeyboardRemove": {},
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        0
+      ],
+      "id": "0e160f61-3ebb-494c-b708-a5f62e74f8d1",
+      "name": "Money Tracker",
+      "webhookId": "d464469d-1ba5-442d-a20c-2a78d37d1bc5",
+      "credentials": {
+        "telegramApi": {
+          "id": "jsO1HYOrfF2b3Lcn",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Money Tracker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MONEY Tracker": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Balance updater": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Balance Alert": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "e7685424-d28c-4546-ba2b-44c75b0aab4d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8079544a1296b4c7c7aa775fd3ab449d6b6cb191a579a693a61207d59de77679"
+  },
+  "id": "CnPHHgURsxg6pOz4",
+  "tags": []
+}
